@@ -1,0 +1,31 @@
+---
+title: "VI Reading in Functions"
+output: 
+  github_document: default
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+```
+
+```{r}
+#functions for reading in csv files from the PAM fluormeter
+make_table <- function(file_path){
+  read_csv2(file_path) %>% 
+    mutate(Date = as.Date(as.character(Date), format = "%d%m%y")) %>%
+  mutate_if(is.character, as.numeric)
+}
+
+#selecting for a specific variable to examine, NPQ for example
+my_variable <- function(my_table, my_variable){
+  my_table %>% select(c(1:4), starts_with(my_variable))
+}
+
+```

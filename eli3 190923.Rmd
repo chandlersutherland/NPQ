@@ -1,0 +1,46 @@
+---
+title: "NPQ Data"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message = FALSE}
+library(tidyverse)
+library(knitr)
+library(ggplot2)
+```
+
+```{r}
+#all wrong values because of initial NPQ error 
+#read in dataset 
+plate1 <- read_csv2("Data/plate 1.csv") %>% 
+  mutate(Date = as.Date(as.character(Date), format = "%d%m%y")) %>%
+  mutate_if(is.character, as.numeric)
+plate1_NPQ <- plate1 %>% select(PAR, No., starts_with("NPQ")) %>% subset(select = -c(3:38))
+plate1_NPQ %>% mutate("WT NPQ avg" = rowMeans(plate1_NPQ[c(12:18)]), 
+         "eli3 NPQ avg" = rowMeans(plate1_NPQ[c(3:11)]),
+           "WT NPQ sd" = apply(plate1_NPQ[c(12:18)], 1, sd), 
+         "eli3 NPQ sd" = apply(plate1_NPQ[c(3:11)], 1, sd))
+
+```
+
+```{r}
+
+#reading in plate 2, which was just Fv/Fm values. 
+plate2 <- read_csv2("Data/plate 2.csv") %>% mutate_if(is.character, as.numeric)
+plate2_YII <- plate2 %>% select(Date, Time, No., PAR, starts_with("Y(II)"))
+#calculate fv/fm from Y(II) values 
+eli3_fvfm <- rowMeans(plate2_YII[1, 41:48])
+WT_fvfm <- rowMeans(plate2_YII[1, 49:56])
+
+print(eli3_fvfm)
+print(WT_fvfm)
+```
+```{r}
+plate2_fofm <- plate2 %>% select(starts_with("Fm"), starts_with("Fo"))
+
+```
+
